@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ordsmed">
+<meta name="theme-color" content="#E9F0F5">
+<title>Ordsmed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E9F0F5;--surface:#F8FBFD;--ink:#10264A;--muted:#5B6F8C;--line:#C5D3E0;--good:#1F7A5A;--bad:#B3261E;--btn:#10264A;--btnink:#F8FBFD;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0F1B2D;--surface:#172640;--ink:#E6EEF7;--muted:#93A6C0;--line:#2B3F5F;--good:#4FC49A;--bad:#FF8A80;--btn:#E6EEF7;--btnink:#0F1B2D;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Figtree,-apple-system,system-ui,sans-serif;font-size:17px}
+body{padding:calc(env(safe-area-inset-top,0px) + 20px) 20px calc(env(safe-area-inset-bottom,0px) + 28px)}
+main{max-width:480px;margin:0 auto}
+h1,.term{font-family:Fraunces,Georgia,serif;font-weight:700;margin:0}
+h1{font-size:2.4rem;letter-spacing:-.02em}
+.sub{color:var(--muted);margin:.3rem 0 1.6rem}
+.sets{display:grid;gap:12px}
+.set{display:flex;justify-content:space-between;align-items:center;width:100%;padding:18px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.set b{font-family:Fraunces,Georgia,serif;font-size:1.25rem;font-weight:500;display:block}
+.set span{color:var(--muted);font-size:.9rem}
+.set:active{border-color:var(--ink)}
+.top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);margin-bottom:12vh}
+.link{background:none;border:0;color:var(--muted);font:inherit;padding:6px 0;cursor:pointer}
+.term{font-size:clamp(2.2rem,11vw,3.4rem);line-height:1.1;margin-bottom:1.8rem;overflow-wrap:anywhere}
+input{width:100%;padding:16px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:1.1rem}
+input:focus{outline:3px solid var(--ink);outline-offset:1px}
+.btn{width:100%;margin-top:12px;padding:16px;border:0;border-radius:12px;background:var(--btn);color:var(--btnink);font:inherit;font-weight:600;cursor:pointer}
+.btn:focus-visible,.set:focus-visible,.link:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.fb{margin-top:16px;padding:14px 16px;border-radius:12px;border:1.5px solid;font-weight:600}
+.fb small{display:block;font-weight:400;color:var(--ink);margin-top:2px}
+.fb.good{color:var(--good);border-color:var(--good)}
+.fb.bad{color:var(--bad);border-color:var(--bad)}
+.score{font-family:Fraunces,Georgia,serif;font-size:3.2rem;font-weight:700;margin:12vh 0 .2rem}
+ul{padding-left:1.1rem;color:var(--ink)}
+li{margin:.3rem 0}li span{color:var(--muted)}
+.hide{display:none}
+@media (prefers-reduced-motion:no-preference){.fb{animation:pop .18s ease-out}@keyframes pop{from{transform:scale(.97);opacity:.4}}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+// ---- Add or edit terms here. Format: ["norsk", "answer one / answer two"] ----
+const SETS = {
+  "Home": [
+    ["hus","house / home"],["kjøkken","kitchen"],["soverom","bedroom"],["bad","bathroom"],
+    ["stue","living room"],["seng","bed"],["bord","table"],["stol","chair"],
+    ["dør","door"],["vindu","window"],["kjøleskap","refrigerator / fridge"],["nøkkel","key"]
+  ],
+  "College": [
+    ["forelesning","lecture"],["eksamen","exam"],["bibliotek","library"],["oppgave","assignment / task"],
+    ["karakter","grade"],["frist","deadline"],["pensum","syllabus / curriculum / reading list"],["studielån","student loan"],
+    ["lesesal","study hall / reading room"],["student","student"],["semester","semester"],["forsker","researcher"]
+  ],
+  "Shopping": [
+    ["butikk","store / shop"],["pris","price"],["billig","cheap"],["dyr","expensive"],
+    ["kvittering","receipt"],["tilbud","offer / sale / deal"],["handlekurv","shopping cart / shopping basket / basket / cart"],["kasse","checkout / cash register"],
+    ["betale","pay"],["pose","bag"],["størrelse","size"],["rabatt","discount"]
+  ],
+  "Sentences": [
+    ["Hvor er toalettet?","Where is the bathroom? / Where is the toilet?"],
+    ["Hvor mye koster det?","How much does it cost? / How much is it?"],
+    ["Jeg forstår ikke.","I do not understand. / I don’t understand."],
+    ["Kan du snakke saktere?","Can you speak slower? / Can you speak more slowly?"],
+    ["Jeg har ikke tid.","I do not have time. / I don’t have time."],
+    ["Takk for maten.","Thanks for the food. / Thank you for the meal. / Thanks for the meal."],
+    ["Jeg snakker litt norsk.","I speak a little Norwegian."],
+    ["Hva heter du?","What is your name? / What’s your name?"],
+    ["Hvordan har du det?","How are you?"],
+    ["Jeg er sulten.","I am hungry. / I’m hungry."]
+  ]
+};
+
+// ---- helpers ----
+const $ = s => document.querySelector(s), app = $("#app");
+const norm = s => s.toLowerCase().replace(/[’‘]/g,"'")
+  .replace(/n't\b/g," not").replace(/'m\b/g," am").replace(/'s\b/g," is").replace(/'re\b/g," are")
+  .replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim().replace(/^(to|the|a|an) /,"");
+const answers = a => a.split("/").map(norm);
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let best = {};
+try { best = JSON.parse(localStorage.getItem("ordsmed:best") || "{}"); } catch (e) {}
+const saveBest = () => { try { localStorage.setItem("ordsmed:best", JSON.stringify(best)); } catch (e) {} };
+
+// ---- screens ----
+function home() {
+  app.innerHTML = `<h1>Ordsmed</h1><p class="sub">Pick a set to practise.</p><div class="sets">` +
+    Object.keys(SETS).map(n => `<button class="set" data-set="${esc(n)}"><div><b>${esc(n)}</b><span>${SETS[n].length} terms</span></div><span>${best[n] != null ? "Best " + best[n] + "/" + SETS[n].length : "Not tried"}</span></button>`).join("") + `</div>`;
+  app.querySelectorAll(".set").forEach(b => b.onclick = () => start(b.dataset.set, SETS[b.dataset.set]));
+}
+
+function start(name, items) {
+  const deck = shuffle(items); let i = 0, score = 0, missed = [], checked = false;
+  function show() {
+    checked = false;
+    app.innerHTML = `<div class="top"><button class="link" id="back">Back</button><span>${i + 1} of ${deck.length}</span></div>
+      <div class="term">${esc(deck[i][0])}</div>
+      <input id="ans" type="text" placeholder="English meaning" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
+      <div id="fb"></div><button class="btn" id="go">Check answer</button>`;
+    $("#back").onclick = home; $("#go").onclick = act; $("#ans").focus();
+    $("#ans").onkeydown = e => { if (e.key === "Enter") act(); };
+  }
+  function act() {
+    const input = $("#ans");
+    if (checked) { i++; return i < deck.length ? show() : finish(); }
+    if (!input.value.trim()) return;
+    const ok = answers(deck[i][1]).includes(norm(input.value));
+    if (ok) score++; else missed.push(deck[i]);
+    checked = true; input.readOnly = true;
+    $("#fb").innerHTML = ok
+      ? `<div class="fb good" role="status">Correct<small>${esc(deck[i][1])}</small></div>`
+      : `<div class="fb bad" role="status">Incorrect<small>Answer: ${esc(deck[i][1])}</small></div>`;
+    $("#go").textContent = i + 1 < deck.length ? "Next term" : "See results";
+  }
+  function finish() {
+    if (name in SETS && deck.length === SETS[name].length && (best[name] == null || score > best[name])) { best[name] = score; saveBest(); }
+    app.innerHTML = `<div class="score">${score} / ${deck.length}</div><p class="sub">${missed.length ? "Terms to review:" : "You got every term right."}</p>` +
+      (missed.length ? `<ul>${missed.map(m => `<li>${esc(m[0])} <span>${esc(m[1])}</span></li>`).join("")}</ul>` : "") +
+      (missed.length ? `<button class="btn" id="redo">Practise missed terms</button>` : "") +
+      `<button class="btn" id="again" style="background:var(--surface);color:var(--ink);border:1.5px solid var(--line)">Restart set</button>
+       <button class="link" id="home" style="margin-top:12px">All sets</button>`;
+    if (missed.length) $("#redo").onclick = () => start(name + " (missed)", missed);
+    $("#again").onclick = () => start(name.replace(" (missed)", ""), SETS[name.replace(" (missed)", "")]);
+    $("#home").onclick = home;
+  }
+  show();
+}
+home();
+</script>
+</body>
+</html>
