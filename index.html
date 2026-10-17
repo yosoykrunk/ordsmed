@@ -49,57 +49,221 @@ li{margin:.3rem 0}li span{color:var(--muted)}
 <body>
 <main id="app"></main>
 <script>
-// ---- Add or edit terms here. Format: ["norsk", "answer one / answer two"] ----
+// ---- Add or edit terms here. One per line: norsk = answer / another answer ----
+const L = s => s.trim().split("\n").map(l => l.split(" = "));
+const LEVELS = { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate" };
 const SETS = {
-  "Home": [
-    ["hus","house / home"],["kjøkken","kitchen"],["soverom","bedroom"],["bad","bathroom"],
-    ["stue","living room"],["seng","bed"],["bord","table"],["stol","chair"],
-    ["dør","door"],["vindu","window"],["kjøleskap","refrigerator / fridge"],["nøkkel","key"]
-  ],
-  "College": [
-    ["forelesning","lecture"],["eksamen","exam"],["bibliotek","library"],["oppgave","assignment / task"],
-    ["karakter","grade"],["frist","deadline"],["pensum","syllabus / curriculum / reading list"],["studielån","student loan"],
-    ["lesesal","study hall / reading room"],["student","student"],["semester","semester"],["forsker","researcher"]
-  ],
-  "Shopping": [
-    ["butikk","store / shop"],["pris","price"],["billig","cheap"],["dyr","expensive"],
-    ["kvittering","receipt"],["tilbud","offer / sale / deal"],["handlekurv","shopping cart / shopping basket / basket / cart"],["kasse","checkout / cash register"],
-    ["betale","pay"],["pose","bag"],["størrelse","size"],["rabatt","discount"]
-  ],
-  "Sentences": [
-    ["Hvor er toalettet?","Where is the bathroom? / Where is the toilet?"],
-    ["Hvor mye koster det?","How much does it cost? / How much is it?"],
-    ["Jeg forstår ikke.","I do not understand. / I don’t understand."],
-    ["Kan du snakke saktere?","Can you speak slower? / Can you speak more slowly?"],
-    ["Jeg har ikke tid.","I do not have time. / I don’t have time."],
-    ["Takk for maten.","Thanks for the food. / Thank you for the meal. / Thanks for the meal."],
-    ["Jeg snakker litt norsk.","I speak a little Norwegian."],
-    ["Hva heter du?","What is your name? / What’s your name?"],
-    ["Hvordan har du det?","How are you?"],
-    ["Jeg er sulten.","I am hungry. / I’m hungry."]
-  ]
+  "Home": {
+    A1: L(`hus = house / home
+kjøkken = kitchen
+soverom = bedroom
+bad = bathroom
+stue = living room
+seng = bed
+bord = table
+stol = chair
+dør = door
+vindu = window
+nøkkel = key
+rom = room`),
+    A2: L(`kjøleskap = refrigerator / fridge
+vaskemaskin = washing machine
+sofa = sofa / couch
+gulv = floor
+trapp = stairs / staircase
+hage = garden / yard
+leilighet = apartment / flat
+nabo = neighbor / neighbour
+gardin = curtain
+lampe = lamp`),
+    B1: L(`oppvaskmaskin = dishwasher
+støvsuger = vacuum cleaner / vacuum
+husleie = rent
+utleier = landlord
+leietaker = tenant
+søppel = trash / garbage / rubbish
+rydde = tidy up / clean up / tidy
+flytte = move
+kjeller = basement / cellar
+loft = attic / loft
+strøm = electricity / power`),
+    B2: L(`bolig = housing / dwelling / home
+oppussing = renovation
+vedlikehold = maintenance
+visning = viewing / open house
+boligkjøper = home buyer / house buyer
+budrunde = bidding round
+egenkapital = equity / down payment
+tilstandsrapport = condition report
+fuktskade = water damage / moisture damage
+utleie = renting out / rental`)
+  },
+  "College": {
+    A1: L(`student = student
+lærer = teacher
+skole = school
+bok = book
+penn = pen
+klasse = class
+leksjon = lesson
+spørsmål = question
+svar = answer
+lese = read
+skrive = write
+ord = word`),
+    A2: L(`forelesning = lecture
+eksamen = exam
+bibliotek = library
+oppgave = assignment / task
+karakter = grade
+frist = deadline
+semester = semester
+fag = subject / course
+studere = study
+lærebok = textbook
+gruppearbeid = group work
+notat = note`),
+    B1: L(`pensum = syllabus / curriculum / reading list
+studielån = student loan
+lesesal = study hall / reading room
+opptak = admission
+søknad = application
+veileder = supervisor / advisor / adviser
+innlevering = submission / hand-in
+fravær = absence
+oppmøte = attendance
+tilbakemelding = feedback
+stipend = scholarship / grant
+avhandling = thesis / dissertation`),
+    B2: L(`forskning = research
+forsker = researcher
+fagfellevurdert = peer-reviewed / peer reviewed
+tverrfaglig = interdisciplinary
+kildehenvisning = citation / source reference
+plagiat = plagiarism
+studiepoeng = credits / study credits
+semesteravgift = semester fee
+høyere utdanning = higher education
+masteroppgave = master thesis / thesis
+pensumlitteratur = required reading / course literature`)
+  },
+  "Shopping": {
+    A1: L(`butikk = store / shop
+pris = price
+billig = cheap
+dyr = expensive
+penger = money
+kjøpe = buy
+selge = sell
+brød = bread
+melk = milk
+vann = water
+egg = egg / eggs
+ost = cheese`),
+    A2: L(`kvittering = receipt
+tilbud = offer / sale / deal
+handlekurv = shopping cart / shopping basket / basket / cart
+kasse = checkout / cash register
+betale = pay
+pose = bag
+størrelse = size
+rabatt = discount
+kjøpesenter = shopping mall / mall / shopping center
+åpningstid = opening hours / opening time
+stengt = closed
+åpen = open`),
+    B1: L(`bytte = exchange / swap / change
+refusjon = refund
+reklamasjon = complaint / warranty claim
+garanti = warranty / guarantee
+kontant = cash
+kort = card
+levering = delivery
+nettbutikk = online store / webshop / online shop
+bestille = order
+utsolgt = sold out
+merke = brand
+prøverom = fitting room`),
+    B2: L(`forbruker = consumer
+angrerett = right of withdrawal / right to cancel
+betalingsmåte = payment method
+fraktkostnad = shipping cost / shipping costs
+abonnement = subscription
+kampanje = campaign / promotion
+lojalitetsprogram = loyalty program / loyalty programme
+prissammenligning = price comparison
+impulskjøp = impulse purchase / impulse buy
+bærekraftig = sustainable
+moms = vat / sales tax`)
+  },
+  "Sentences": {
+    A1: L(`Hei! = Hi / Hello
+God morgen. = Good morning
+Takk. = Thanks / Thank you
+Unnskyld. = Excuse me / Sorry
+Ja, takk. = Yes please / Yes thank you
+Nei, takk. = No thank you / No thanks
+Hvor er toalettet? = Where is the bathroom / Where is the toilet
+Hva heter du? = What is your name
+Hvordan har du det? = How are you
+Jeg er sulten. = I am hungry
+Jeg forstår ikke. = I do not understand`),
+    A2: L(`Hvor mye koster det? = How much does it cost / How much is it
+Kan du snakke saktere? = Can you speak slower / Can you speak more slowly
+Jeg snakker litt norsk. = I speak a little Norwegian
+Jeg har ikke tid. = I do not have time
+Takk for maten. = Thanks for the food / Thank you for the meal / Thanks for the meal
+Hvor kommer du fra? = Where are you from
+Kan du hjelpe meg? = Can you help me
+Hva er klokka? = What time is it
+Jeg vil gjerne ha kaffe. = I would like coffee / I would like some coffee / I would like a coffee`),
+    B1: L(`Kan du gjenta det, takk? = Can you repeat that please / Could you repeat that please
+Jeg har bestilt bord til to. = I have booked a table for two / I have reserved a table for two
+Hva anbefaler du? = What do you recommend
+Jeg har mistet nøkkelen min. = I have lost my key / I lost my key
+Det kommer an på været. = It depends on the weather
+Jeg gleder meg til helgen. = I am looking forward to the weekend
+Beklager at jeg er sen. = Sorry I am late / Sorry that I am late / I am sorry that I am late
+Har du lyst til å bli med? = Do you want to come along / Do you want to join / Would you like to join
+Vet du hvor stasjonen er? = Do you know where the station is`),
+    B2: L(`Jeg er ikke helt enig med deg. = I do not completely agree with you / I do not entirely agree with you
+Det spiller ingen rolle. = It does not matter / It makes no difference
+Jeg ville satt pris på tilbakemelding. = I would appreciate feedback
+Til tross for været gikk vi en tur. = Despite the weather we went for a walk / In spite of the weather we went for a walk
+Hvis jeg hadde visst det, hadde jeg ringt deg. = If I had known that I would have called you / If I had known I would have called you
+Det er vanskelig å si. = It is hard to say / It is difficult to say
+Jeg har ikke rukket å lese det ennå. = I have not had time to read it yet
+Har du noe imot at jeg åpner vinduet? = Do you mind if I open the window
+Det avhenger av hvordan man ser på det. = It depends on how you look at it / It depends on how one looks at it
+Etter min mening er det en god idé. = In my opinion it is a good idea`)
+  }
 };
 
 // ---- helpers ----
 const $ = s => document.querySelector(s), app = $("#app");
 const norm = s => s.toLowerCase().replace(/[’‘]/g,"'")
-  .replace(/n't\b/g," not").replace(/'m\b/g," am").replace(/'s\b/g," is").replace(/'re\b/g," are")
+  .replace(/n't\b/g," not").replace(/'m\b/g," am").replace(/'s\b/g," is").replace(/'re\b/g," are").replace(/'d\b/g," would")
   .replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim().replace(/^(to|the|a|an) /,"");
 const answers = a => a.split("/").map(norm);
 const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
 const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-let best = {};
-try { best = JSON.parse(localStorage.getItem("ordsmed:best") || "{}"); } catch (e) {}
-const saveBest = () => { try { localStorage.setItem("ordsmed:best", JSON.stringify(best)); } catch (e) {} };
-
 // ---- screens ----
 function home() {
   app.innerHTML = `<h1>Ordsmed</h1><p class="sub">Pick a set to practise.</p><div class="sets">` +
-    Object.keys(SETS).map(n => `<button class="set" data-set="${esc(n)}"><div><b>${esc(n)}</b><span>${SETS[n].length} terms</span></div><span>${best[n] != null ? "Best " + best[n] + "/" + SETS[n].length : "Not tried"}</span></button>`).join("") + `</div>`;
-  app.querySelectorAll(".set").forEach(b => b.onclick = () => start(b.dataset.set, SETS[b.dataset.set]));
+    Object.keys(SETS).map(n => `<button class="set" data-set="${esc(n)}"><div><b>${esc(n)}</b><span>${Object.values(SETS[n]).flat().length} terms</span></div></button>`).join("") + `</div>`;
+  app.querySelectorAll(".set").forEach(b => b.onclick = () => levels(b.dataset.set));
 }
 
-function start(name, items) {
+function levels(name) {
+  const S = SETS[name], all = Object.values(S).flat();
+  app.innerHTML = `<div class="top" style="margin-bottom:4vh"><button class="link" id="back">Back</button></div><h1>${esc(name)}</h1><p class="sub">Choose a level.</p><div class="sets">` +
+    Object.keys(S).map(l => `<button class="set" data-l="${l}"><div><b>${l}</b><span>${LEVELS[l]}, ${S[l].length} terms</span></div></button>`).join("") +
+    `<button class="set" data-l="all"><div><b>All levels</b><span>${all.length} terms mixed</span></div></button></div>`;
+  $("#back").onclick = home;
+  app.querySelectorAll(".set").forEach(b => b.onclick = () => start(b.dataset.l === "all" ? all : S[b.dataset.l], () => levels(name)));
+}
+
+function start(items, back) {
   const deck = shuffle(items); let i = 0, score = 0, missed = [], checked = false;
   function show() {
     checked = false;
@@ -108,7 +272,7 @@ function start(name, items) {
       <input id="ans" type="text" placeholder="English meaning" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
       <div id="fb"></div><button class="btn" id="go">Check answer</button>
       <button class="btn skip" id="skip">Skip</button>`;
-    $("#back").onclick = home; $("#go").onclick = act; $("#skip").onclick = skip; $("#ans").focus();
+    $("#back").onclick = back; $("#go").onclick = act; $("#skip").onclick = skip; $("#ans").focus();
     $("#ans").onkeydown = e => { if (e.key === "Enter") act(); };
   }
   function act() {
@@ -122,6 +286,7 @@ function start(name, items) {
       ? `<div class="fb good" role="status">Correct<small>${esc(deck[i][1])}</small></div>`
       : `<div class="fb bad" role="status">Incorrect<small>Answer: ${esc(deck[i][1])}</small></div>`;
     $("#go").textContent = i + 1 < deck.length ? "Next term" : "See results";
+    $("#skip").classList.add("hide");
   }
   function skip() {
     if (checked) return;
@@ -131,15 +296,12 @@ function start(name, items) {
     $("#skip").classList.add("hide");
   }
   function finish() {
-    if (name in SETS && deck.length === SETS[name].length && (best[name] == null || score > best[name])) { best[name] = score; saveBest(); }
     app.innerHTML = `<div class="score">${score} / ${deck.length}</div><p class="sub">${missed.length ? "Terms to review:" : "You got every term right."}</p>` +
-      (missed.length ? `<ul>${missed.map(m => `<li>${esc(m[0])} <span>${esc(m[1])}</span></li>`).join("")}</ul>` : "") +
-      (missed.length ? `<button class="btn" id="redo">Practise missed terms</button>` : "") +
-      `<button class="btn" id="again" style="background:var(--surface);color:var(--ink);border:1.5px solid var(--line)">Restart set</button>
-       <button class="link" id="home" style="margin-top:12px">All sets</button>`;
-    if (missed.length) $("#redo").onclick = () => start(name + " (missed)", missed);
-    $("#again").onclick = () => start(name.replace(" (missed)", ""), SETS[name.replace(" (missed)", "")]);
-    $("#home").onclick = home;
+      (missed.length ? `<ul>${missed.map(m => `<li>${esc(m[0])} <span>${esc(m[1])}</span></li>`).join("")}</ul><button class="btn" id="redo">Practise missed terms</button>` : "") +
+      `<button class="btn skip" id="again">Restart</button><button class="link" id="home" style="margin-top:12px">Back to levels</button>`;
+    if (missed.length) $("#redo").onclick = () => start(missed, back);
+    $("#again").onclick = () => start(items, back);
+    $("#home").onclick = back;
   }
   show();
 }
