@@ -31,6 +31,9 @@ h1{font-size:2.4rem;letter-spacing:-.02em}
 input{width:100%;padding:16px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:1.1rem}
 input:focus{outline:3px solid var(--ink);outline-offset:1px}
 .btn{width:100%;margin-top:12px;padding:16px;border:0;border-radius:12px;background:var(--btn);color:var(--btnink);font:inherit;font-weight:600;cursor:pointer}
+.btn.skip{background:var(--bg);color:var(--ink);border:1.5px solid var(--line);margin-top:10px}
+.btn.skip:active{border-color:var(--ink)}
+.fb.skipped{color:var(--muted);border-color:var(--line)}
 .btn:focus-visible,.set:focus-visible,.link:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .fb{margin-top:16px;padding:14px 16px;border-radius:12px;border:1.5px solid;font-weight:600}
 .fb small{display:block;font-weight:400;color:var(--ink);margin-top:2px}
@@ -103,8 +106,9 @@ function start(name, items) {
     app.innerHTML = `<div class="top"><button class="link" id="back">Back</button><span>${i + 1} of ${deck.length}</span></div>
       <div class="term">${esc(deck[i][0])}</div>
       <input id="ans" type="text" placeholder="English meaning" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
-      <div id="fb"></div><button class="btn" id="go">Check answer</button>`;
-    $("#back").onclick = home; $("#go").onclick = act; $("#ans").focus();
+      <div id="fb"></div><button class="btn" id="go">Check answer</button>
+      <button class="btn skip" id="skip">Skip</button>`;
+    $("#back").onclick = home; $("#go").onclick = act; $("#skip").onclick = skip; $("#ans").focus();
     $("#ans").onkeydown = e => { if (e.key === "Enter") act(); };
   }
   function act() {
@@ -118,6 +122,13 @@ function start(name, items) {
       ? `<div class="fb good" role="status">Correct<small>${esc(deck[i][1])}</small></div>`
       : `<div class="fb bad" role="status">Incorrect<small>Answer: ${esc(deck[i][1])}</small></div>`;
     $("#go").textContent = i + 1 < deck.length ? "Next term" : "See results";
+  }
+  function skip() {
+    if (checked) return;
+    missed.push(deck[i]); checked = true; $("#ans").readOnly = true;
+    $("#fb").innerHTML = `<div class="fb skipped" role="status">Skipped<small>Answer: ${esc(deck[i][1])}</small></div>`;
+    $("#go").textContent = i + 1 < deck.length ? "Next term" : "See results";
+    $("#skip").classList.add("hide");
   }
   function finish() {
     if (name in SETS && deck.length === SETS[name].length && (best[name] == null || score > best[name])) { best[name] = score; saveBest(); }
